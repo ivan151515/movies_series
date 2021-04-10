@@ -6,7 +6,7 @@ class SeriesController {
     async searchSeriesByTitle(req, res, next) {
         try {
             const {data} = await axios.get(TV_MAZE_BASE_URL + "big")
-            res.status(200).json(data)
+            res.status(200).json({data, query: req.query})
         } catch (error) {
             next(ApiError.notFound("Not found"))
         }

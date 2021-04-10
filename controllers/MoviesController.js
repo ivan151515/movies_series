@@ -8,7 +8,7 @@ class MoviesController {
     searchMoviesByTitle = async(req, res, next) => {
         try {
             const {data} = await axios.get(OMDB_BASE_URL + "r" + `&apikey=${process.env.OMDB_API_KEY}`)
-            res.status(200).json(data)
+            res.status(200).json({data, url: OMDB_BASE_URL + "r" + `&apikey=${process.env.OMDB_API_KEY}`})
         } catch (error) {
             next(ApiError.notFound("Not found"))
         }

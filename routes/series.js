@@ -1,9 +1,10 @@
 const express = require("express")
+const SeriesController = require("../controllers/SeriesController")
 
 const router = express.Router()
 
-router.get("/", (req, res ) => {
-    res.json({test: "I am series router"})
-})
+router.get("/", SeriesController.searchSeriesByTitle)
+
+router.get("/:id", SeriesController.getSeriesById)
 
 module.exports = router

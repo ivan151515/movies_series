@@ -1,4 +1,5 @@
 const ApiError = require("../error/ApiError")
+const Serie = require("../db/models/serie")
 const { TV_MAZE_BASE_URL } = require("../constants")
 const axios = require("axios")
 
@@ -14,7 +15,16 @@ class SeriesController {
 
 
     async getSeriesById(req, res, next) {
-        res.status(200).json({id: req.params.id})
+        try {
+            const serie = await Serie.query().findById(req.params.id)
+            if(!serie) {
+                return next(ApiError.notFound("Not Found"))
+            }
+
+            res.status(200).json({serie, id: req.params.id})
+        } catch (error) {
+            next(ApiError.internal("Something went wrong"))
+        }
     }
 }
 module.exports = new SeriesController()

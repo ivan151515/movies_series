@@ -2,19 +2,23 @@ const express = require("express")
 const moviesRouter = require("./routes/movies")
 const seriesRouter = require("./routes/series")
 const cors = require("cors")
-const axios = require("axios")
 const setupDb = require("./db/db-setup")
+const specs = require("./config/swagger.config")
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+// import SwaggerJsDoc from "swagger-jsdoc"
 const apiErrorHandler = require("./error/api-error-handler")
 const ApiError = require("./error/ApiError")
 
 require("dotenv").config()
 
+const PORT = process.env.PORT || 5000
 
 const app = express()
 
 setupDb()
 
-const PORT = process.env.PORT || 5000
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(cors())
 app.use(express.json())

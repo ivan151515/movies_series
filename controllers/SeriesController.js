@@ -22,7 +22,7 @@ class SeriesController {
             }
 
             const { data } = await axios.get(TV_MAZE_BASE_URL + search)
-            // TODO: TEST IT OUT
+
             let plot = data.summary ?
                 htmlToText(data.summary, {wordwrap: false}) : null
 

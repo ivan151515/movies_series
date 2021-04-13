@@ -7,16 +7,16 @@ require("dotenv").config()
 
 class MoviesController {    
     searchMoviesByTitle = async(req, res, next) => {
-        const {search} = req.query
-        const searchTerm = search.trim()
+        const search = req.query?.search 
+        let searchTerm;
 
         try {
             // if no search term just return five movies
-            if(!searchTerm) {
+            if(!search) {
                 const movies = await Movie.query().limit(5)
                 res.status(200).json({movies})
             }
-
+            searchTerm = search.trim()
             const movies = await Movie.query().where("title", "ILIKE", `%${searchTerm}%`).limit(5)
             // if movie(s) found return 
             if(movies.length > 0) {
@@ -27,8 +27,8 @@ class MoviesController {
             const {data} = await axios.get(OMDB_BASE_URL + `${searchTerm}&apikey=${process.env.OMDB_API_KEY}`)
             
             if(data.Response === "True") {
-                // TODO: TEST THIS OUT
-                const movie = await Movie.query().insert({
+
+                let model = {
                     title: data.Title,
                     rated: data.Rated,
                     runtime: data.Runtime !== "N/A" ? data.Runtime.split(" min")[0] : null,
@@ -41,11 +41,13 @@ class MoviesController {
                     language: data.Language,
                     year: data.Year !== "N/A" ? data.Year : null,
                     writers: data.Writer
-                }).returning("*")
+                }
+
+                const movie = await Movie.query().insert(model).returning("*")
 
                 res.status(200).json({movies: [movie]})
             } else {
-                res.status(200).json({movies: []})
+                next(ApiError.notFound("Not found"))
             }            
         } catch (error) {
             next(ApiError.internal("Something went wrong"))

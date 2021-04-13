@@ -70,12 +70,12 @@
 
  /**
  * @swagger
- * /movies?search={search}:
+ * /movies:
  *   get:
  *     summary: Get the movie by title, if no search term provided returns 5 movies
  *     tags: [Movies]
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: search
  *         schema:
  *           type: string
@@ -90,6 +90,8 @@
  *               type: array
  *               items:
  *                  $ref: '#/components/schemas/Movie'
+ *       404:
+ *         description: Not found 
  *       500:
  *         description: Something went wrong
  */

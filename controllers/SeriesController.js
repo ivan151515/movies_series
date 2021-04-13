@@ -7,16 +7,15 @@ const { htmlToText } = require('html-to-text');
 
 class SeriesController {
     async searchSeriesByTitle(req, res, next) {
-        const { search } = req.query
-
-        const searchTerm = search.trim()
+        const search = req.query?.search 
+        let searchTerm;
         try {
-            if (!searchTerm) {
+            if (!search) {
                 const series = await Serie.query().limit(5)
 
                 return res.status(200).json({ series })
             }
-
+            searchTerm = search.trim()
             let series = await Serie.query().where("title", "ILIKE", `%${searchTerm}%`).limit(5)
 
             if (series.length > 0) {

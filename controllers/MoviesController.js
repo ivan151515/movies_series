@@ -8,22 +8,23 @@ require("dotenv").config()
 class MoviesController {    
     searchMoviesByTitle = async(req, res, next) => {
         const {search} = req.query
-        
+        const searchTerm = search.trim()
+
         try {
             // if no search term just return five movies
-            if(!search) {
+            if(!searchTerm) {
                 const movies = await Movie.query().limit(5)
                 res.status(200).json({movies})
             }
 
-            const movies = await Movie.query().where("title", "ILIKE", `%${search}%`).limit(5)
+            const movies = await Movie.query().where("title", "ILIKE", `%${searchTerm}%`).limit(5)
             // if movie(s) found return 
             if(movies.length > 0) {
                return res.status(200).json({movies})
             }
 
             // no movie found search in local db search in omdb
-            const {data} = await axios.get(OMDB_BASE_URL + `${search}&apikey=${process.env.OMDB_API_KEY}`)
+            const {data} = await axios.get(OMDB_BASE_URL + `${searchTerm}&apikey=${process.env.OMDB_API_KEY}`)
             
             if(data.Response === "True") {
                 // TODO: TEST THIS OUT
@@ -47,7 +48,7 @@ class MoviesController {
                 res.status(200).json({movies: []})
             }            
         } catch (error) {
-            next(ApiError.notFound("Not found"))
+            next(ApiError.internal("Something went wrong"))
         }
 
     }

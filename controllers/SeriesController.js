@@ -8,25 +8,27 @@ const { htmlToText } = require('html-to-text');
 class SeriesController {
     async searchSeriesByTitle(req, res, next) {
         const { search } = req.query
+
+        const searchTerm = search.trim()
         try {
-            if (!search) {
+            if (!searchTerm) {
                 const series = await Serie.query().limit(5)
 
                 return res.status(200).json({ series })
             }
 
-            let series = await Serie.query().where("title", "ILIKE", `%${search}%`).limit(5)
+            let series = await Serie.query().where("title", "ILIKE", `%${searchTerm}%`).limit(5)
 
             if (series.length > 0) {
                 return res.status(200).json({ series })
             }
 
-            const { data } = await axios.get(TV_MAZE_BASE_URL + search)
+            const { data } = await axios.get(TV_MAZE_BASE_URL + searchTerm)
 
             let plot = data.summary ?
                 htmlToText(data.summary, {wordwrap: false}) : null
 
-            series = await Serie.query().insert({
+            let model = {
                 title: data.name,
                 type: data.type,
                 genre: data.genres && data.genres.length > 0 ? data.genres.join(", ") : null,
@@ -36,7 +38,9 @@ class SeriesController {
                 network: data.network ? data.network.name : null,
                 language: data.language,
                 status: data.status
-            }).returning("*")
+            }
+            
+            series = await Serie.query().insert(model).returning("*")
 
             res.status(200).json({ series })
         } catch (error) {

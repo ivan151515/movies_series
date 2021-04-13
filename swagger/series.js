@@ -61,12 +61,12 @@
 
 /**
  * @swagger
- * /series?search={search}:
+ * /series:
  *   get:
  *     summary: Get the book by title, if no search term provided returns 5 series
  *     tags: [Series]
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: search
  *         schema:
  *           type: string

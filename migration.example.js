@@ -1,4 +1,3 @@
-
 exports.up = function(knex) {
     return knex.schema
     .createTable("movies", table => {
@@ -10,7 +9,7 @@ exports.up = function(knex) {
         table.integer("year")
         table.integer("runtime")
         table.string("genre")
-        table.string("plot")
+        table.text("plot")
         table.string("rated")
         table.float("rating")
         table.string("language")
@@ -23,7 +22,7 @@ exports.up = function(knex) {
         table.string("genre")
         table.integer("runtime")
         table.float("rating")
-        table.string("plot")
+        table.text("plot")
         table.string("status")
         table.string("network")
         table.string("language")
